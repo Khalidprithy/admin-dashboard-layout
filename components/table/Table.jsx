@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { BiLeftArrow, BiRightArrow } from 'react-icons/bi';
 import { BsSearch } from 'react-icons/bs';
-import Select from '../Input/Select';
-import { selectPageOptions } from '../helper/selectOptions';
+import { GrFilter } from 'react-icons/gr';
 
 const MyTable = ({ entities, columns }) => {
    const [currentPage, setCurrentPage] = useState(1);
    const [entitiesPerPage, setEntitiesPerPage] = useState(5);
    const [search, setSearch] = useState('');
-
-   console.log(entitiesPerPage);
+   const [sortField, setSortField] = useState('');
+   const [sortDirection, setSortDirection] = useState('asc');
 
    // Logic for displaying current entities
    const indexOfLastEntity = currentPage * entitiesPerPage;
@@ -29,31 +29,52 @@ const MyTable = ({ entities, columns }) => {
       pageNumbers.push(i);
    }
 
+   const handleSort = field => {
+      console.log('Clicked', field);
+      if (sortField === field) {
+         // Reverse the sort direction if the same field is clicked again
+         setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      } else {
+         setSortField(field);
+         setSortDirection('asc');
+      }
+   };
+
+   const sortedData = [...searchEntities].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+   });
+
+   console.log('sortedData', sortedData);
+
    const handleClick = event => {
       setCurrentPage(Number(event.target.id));
    };
 
-   const handleEntitiesPerPageChange = event => {
-      console.log(event.target.value);
-      setEntitiesPerPage(event.target.value.name);
+   const handlePreviousBtn = () => {
+      setCurrentPage(prevPage => Number(prevPage - 1));
    };
 
+   const handleNextBtn = () => {
+      setCurrentPage(prevPage => Number(prevPage + 1));
+   };
+
+   const handleSetEntitiesPerPage = e => {
+      setEntitiesPerPage(Number(e.target.value));
+   };
+
+   console.log(pageNumbers.length);
+
    return (
-      <div className='mx-auto w-full pt-6 px-4'>
-         <div className='flex flex-col gap-2 bg-gray-100 px-12 py-8'>
+      <div className='container mx-auto w-full pt-6'>
+         <div className='flex flex-col gap-2 bg-gray-100 px-1 lg:px-12'>
             {/* Search Input */}
 
-            <div className='flex items-center justify-between'>
-               <div className='w-48 flex items-center gap-2'>
-                  <h4>Show </h4>
-                  <Select
-                     label={entitiesPerPage}
-                     option={selectPageOptions}
-                     onClick={handleEntitiesPerPageChange}
-                  />
-                  <h4>Entities </h4>
-               </div>
-               <div className='w-1/2'>
+            <div className='w-full flex justify-end pr-2'>
+               <div className='w-2/5'>
                   <div className='relative h-11 w-full min-w-[200px]'>
                      <input
                         className='peer h-full w-full rounded-md border-0 shadow-sm border-blue-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-cyan-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50'
@@ -76,79 +97,109 @@ const MyTable = ({ entities, columns }) => {
                </div>
             </div>
 
-            <div className='w-full bg-white shadow overflow-scroll border-b sm:rounded-lg mt-6'>
+            {/* Search Input */}
+            <div
+               className={`overflow-x-scroll overflow-y-scroll w-full
+              ${entitiesPerPage > 5 ? 'min-h-fit' : 'h-auto'}
+             bg-white shadow overflow-scroll border-b sm:rounded-lg mt-6`}
+            >
                <table className='w-full min-w-max table-auto text-left'>
                   <thead>
                      <tr>
                         {columns.map(column => (
                            <th
-                              key={column.id}
+                              onClick={() =>
+                                 handleSort(`${column.toLowerCase()}`)
+                              }
                               className='border-y border-blue-gray-100 bg-blue-gray-50/50 p-4'
                            >
-                              {column}
+                              <div className='flex items-center gap-2'>
+                                 {column}
+                                 <GrFilter />
+                              </div>
                            </th>
                         ))}
                      </tr>
                   </thead>
-                  <tbody>
-                     {searchEntities.map(entity => (
+                  <tbody className='divide-y'>
+                     {sortedData.map(entity => (
                         <tr key={entity.id}>
-                           <td className='p-4 border-b border-blue-gray-50'>
-                              {entity.id}
-                           </td>
-                           <td className='p-4 border-b border-blue-gray-50'>
-                              {entity.name}
-                           </td>
-                           <td className='p-4 border-b border-blue-gray-50'>
-                              {entity.email}
-                           </td>
-                           <td className='p-4 border-b border-blue-gray-50'>
-                              {entity.phone}
-                           </td>
+                           <td className='p-4'>{entity.id}</td>
+                           <td className='p-4'>{entity.name}</td>
+                           <td className='p-4'>{entity.email}</td>
+                           <td className='p-4'>{entity.phone}</td>
                         </tr>
                      ))}
                   </tbody>
                </table>
             </div>
-            <div className='mt-4 flex justify-end'>
-               <button
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  className={`  ${
-                     currentPage != 1
-                        ? 'btn btn-sm btn-primary rounded text-white'
-                        : 'btn btn-sm btn-disabled rounded'
-                  }`}
-               >
-                  Previous
-               </button>
-
-               {pageNumbers.map(num => (
-                  <button
-                     key={num}
-                     id={num}
-                     onClick={handleClick}
-                     className={`
+            <div className='w-full flex items-center justify-between'>
+               <div className='mt w-1/4 flex justify-start pl-2'>
+                  <select
+                     onChange={e => handleSetEntitiesPerPage(e)}
+                     className='select w-full rounded-md border-1 border-gray-100  bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all focus:border-2 focus:border-cyan-500 focus:outline-0 disabled:border-0 bg-white shadow-sm disabled:bg-blue-gray-50'
+                  >
+                     <option disabled selected>
+                        Rows per page
+                     </option>
+                     <option value='5'>5</option>
+                     <option value='10'>10</option>
+                     <option value='15'>15</option>
+                     <option value='20'>20</option>
+                  </select>
+               </div>
+               <div className='mt-4 flex justify-end pr-2'>
+                  <div className='flex items-center gap-6'>
+                     <button
+                        disabled={currentPage <= 1 ? true : false}
+                        className={`
                      ${
-                        num === currentPage
-                           ? 'mx-1 px-4 py-1 border shadow rounded-md bg-sky-600 text-white text-sm transition duration-500'
-                           : 'text-gray-700 rounded-md text-sm px-4 py-1 hover:bg-gray-100  transition duration-300'
+                        currentPage > 1
+                           ? 'w-8 h-8 hover:bg-sky-700 p-2 bg-sky-500 flex items-center justify-center text-white font-semibold rounded-md shdow'
+                           : 'w-8 h-8 p-2 flex items-center justify-center rounded-md bg-gray-200 text-gray-700 cursor-not-allowed'
                      }
                      `}
-                  >
-                     {num}
-                  </button>
-               ))}
-
-               <button
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className={`  ${
-                     currentPage != pageNumbers.length
-                        ? 'btn btn-sm btn-primary rounded text-white'
-                        : 'btn btn-sm btn-disabled rounded'
-                  }`}
-               >
-                  Next
-               </button>
+                        onClick={handlePreviousBtn}
+                     >
+                        <BiLeftArrow />
+                     </button>
+                     <div>
+                        {pageNumbers.map(num => (
+                           <button
+                              key={num}
+                              id={num}
+                              onClick={handleClick}
+                              className={`
+                     ${
+                        num === currentPage
+                           ? 'mx-2 px-4 py-2 border shadow-sm shadow-sky-300 rounded-md bg-sky-600 text-white text-sm transition duration-500'
+                           : 'text-gray-700 rounded-md text-sm px-4 py-2 hover:bg-gray-200 transition duration-150'
+                     }
+                     `}
+                           >
+                              {num}
+                           </button>
+                        ))}
+                     </div>
+                     <button
+                        disabled={
+                           currentPage >= Number(pageNumbers.length)
+                              ? true
+                              : false
+                        }
+                        className={`
+                     ${
+                        currentPage < Number(pageNumbers.length)
+                           ? 'w-8 h-8 hover:bg-sky-700 p-2 bg-sky-500 flex items-center justify-center text-white font-semibold rounded-md shdow'
+                           : 'w-8 h-8 p-2 flex items-center justify-center rounded-md bg-gray-200 text-gray-700 cursor-not-allowed'
+                     }
+                     `}
+                        onClick={handleNextBtn}
+                     >
+                        <BiRightArrow />
+                     </button>
+                  </div>
+               </div>
             </div>
          </div>
       </div>

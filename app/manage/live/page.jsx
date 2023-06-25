@@ -73,7 +73,7 @@ export default function Dashboard() {
                            <Select label='Status' option={StatusOptions} />
                         </div>
                      </div>
-                     <div className='grid grid-cols-2 justify-center divide-x-0 md:divide-x'>
+                     <div className='grid grid-cols-2 justify-center gap-4 divide-x-0 lg:divide-x'>
                         <div className='col-span-2 lg:col-span-1 flex flex-col gap-6 z-40 shadow-gray-500 w-full h-auto px-4'>
                            <h4 className='text-lg text-gray-800 font-semibold'>
                               Team One Information

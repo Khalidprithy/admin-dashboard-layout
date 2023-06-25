@@ -1,6 +1,6 @@
 const TextArea = ({ label, type = 'text' }) => {
    return (
-      <div className='w-full'>
+      <div className='w-full pb-4'>
          <div className='relative h-20 w-full min-w-[200px]'>
             <textarea
                className='peer block min-h-[auto] w-full rounded-md border-0 shadow-sm border-blue-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-cyan-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50'

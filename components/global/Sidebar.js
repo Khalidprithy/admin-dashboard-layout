@@ -3,7 +3,13 @@ import { usePathname } from 'next/navigation';
 import { forwardRef, useMemo } from 'react';
 
 import { BiBarcodeReader, BiNews } from 'react-icons/bi';
-import { FaCcStripe, FaDollarSign, FaIoxhost, FaUsers } from 'react-icons/fa';
+import {
+   FaCcStripe,
+   FaDollarSign,
+   FaIoxhost,
+   FaStar,
+   FaUsers
+} from 'react-icons/fa';
 import { ImFileVideo, ImUserCheck } from 'react-icons/im';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoDesktopOutline, IoGrid, IoPlayCircle } from 'react-icons/io5';
@@ -37,6 +43,12 @@ const SideBar = forwardRef(({ sidebarOpen }, ref) => {
             label: 'Fixtures',
             active: pathname === '/fixtures',
             href: '/fixtures'
+         },
+         {
+            icon: FaStar,
+            label: 'Popular',
+            active: pathname === '/popular',
+            href: '/popular_teams'
          },
          {
             icon: ImFileVideo,
