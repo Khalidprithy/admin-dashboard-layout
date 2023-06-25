@@ -58,55 +58,54 @@ export default function Dashboard() {
             </div>
             <div className='flex flex-col gap-8'>
                <div className='flex flex-col gap-4'>
-                  <div className=' flex flex-col gap-6 bg-white rounded-md shadow-md z-40 shadow-gray-500 w-full h-auto px-6 py-4'>
+                  <div className='flex flex-col gap-6 bg-white rounded-md shadow z-40 shadow-gray-300 w-full h-auto px-6 py-6'>
                      <h4 className='text-lg text-gray-800 font-semibold'>
                         Match Information
                      </h4>
-                     <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                        <div className='col-span-2 lg:col-span-1'>
-                           <Input label='Match Title' />
-                        </div>
+                     <div className='w-full'>
+                        <Input label='Match Title' />
+                     </div>
+                     <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 divide-y'>
                         <div className='col-span-2 lg:col-span-1'>
                            <Input label='Match Time' />
                         </div>
-                     </div>
-                     <div className='w-full'>
-                        <Select label='Status' option={StatusOptions} />
-                     </div>
-                  </div>
-               </div>
-               <div className='flex flex-col gap-4'>
-                  <div className='grid grid-cols-2 gap-6'>
-                     <div className='col-span-2 lg:col-span-1 flex flex-col gap-6 bg-white rounded-md shadow-md z-40 shadow-gray-500 w-full h-auto px-6 py-4'>
-                        <h4 className='text-lg text-gray-800 font-semibold'>
-                           Team One Information
-                        </h4>
-                        <div className='w-full'>
-                           <Input label='Name' />
-                        </div>
-                        <div className='w-full'>
-                           <Select
-                              label='Image Type'
-                              option={ImageTypeOptions}
-                           />
+                        <div className='col-span-2 lg:col-span-1'>
+                           <Select label='Status' option={StatusOptions} />
                         </div>
                      </div>
-                     <div className='col-span-2 lg:col-span-1 flex flex-col gap-6 bg-white rounded-md shadow-md z-40 shadow-gray-500 w-full h-auto px-6 py-4'>
-                        <h4 className='text-lg text-gray-800 font-semibold'>
-                           Team Two Information
-                        </h4>
-                        <div className='w-full'>
-                           <Input label='Name' />
+                     <div className='grid grid-cols-2 justify-center divide-x-0 md:divide-x'>
+                        <div className='col-span-2 lg:col-span-1 flex flex-col gap-6 z-40 shadow-gray-500 w-full h-auto px-4'>
+                           <h4 className='text-lg text-gray-800 font-semibold'>
+                              Team One Information
+                           </h4>
+                           <div className='w-full'>
+                              <Input label='Name' />
+                           </div>
+                           <div className='w-full'>
+                              <Select
+                                 label='Image Type'
+                                 option={ImageTypeOptions}
+                              />
+                           </div>
                         </div>
-                        <div className='w-full'>
-                           <Select
-                              label='Image Type'
-                              option={ImageTypeOptions}
-                           />
+                        <div className='col-span-2 lg:col-span-1 flex flex-col gap-6 bg-white z-4 w-full h-auto px-4'>
+                           <h4 className='text-lg text-gray-800 font-semibold'>
+                              Team Two Information
+                           </h4>
+                           <div className='w-full'>
+                              <Input label='Name' />
+                           </div>
+                           <div className='w-full'>
+                              <Select
+                                 label='Image Type'
+                                 option={ImageTypeOptions}
+                              />
+                           </div>
                         </div>
                      </div>
                   </div>
                </div>
+               <div className='flex flex-col gap-4'></div>
                <div className='flex flex-col gap-4'>
                   <div className='relative flex flex-col gap-6 bg-white rounded-md shadow-md z-40 shadow-gray-500 w-full h-auto px-6 py-4'>
                      <h4 className='text-lg text-gray-800 font-semibold'>
@@ -168,13 +167,16 @@ export default function Dashboard() {
 
                      <div className=''>
                         {[...Array(streamCount)].map((_, index) => (
-                           <div className='my-4 grid grid-cols-1 lg:grid-cols-2 gap-6 ring-1 ring-gray-400 rounded-md px-8 py-6 relative'>
+                           <div
+                              key={index}
+                              className='my-4 grid grid-cols-1 lg:grid-cols-2 gap-6 ring-1 ring-gray-400 rounded-md px-8 py-6 relative'
+                           >
                               {index >= 1 && (
                                  <button
                                     onClick={handleDecreaseStreaming}
-                                    className='absolute right-8 top-4 bg-teal-600 text-sm px-2 py-2 w-24 rounded-md text-white shadow-sm shadow-gray-900 cursor-pointer hover:bg-teal-800 outline-none focus:outline-none'
+                                    className='absolute right-4 top-4 btn btn-circle btn-sm text-white bg-rose-400 hover:bg-rose-500 border-none '
                                  >
-                                    Remove
+                                    X
                                  </button>
                               )}
                               <div className='pt-16 col-span-2 lg:col-span-1'>

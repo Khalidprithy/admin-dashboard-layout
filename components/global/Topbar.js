@@ -9,15 +9,18 @@ import ImageCom from '../Image/Image';
 const profileMenuItems = [
    {
       label: 'My Profile',
-      icon: CgProfile
+      icon: CgProfile,
+      href: '/profile'
    },
    {
       label: 'Edit Profile',
-      icon: FaUserEdit
+      icon: FaUserEdit,
+      href: '/profile/edit'
    },
    {
       label: 'Change Password',
-      icon: FaExpeditedssl
+      icon: FaExpeditedssl,
+      href: '/password'
    },
    {
       label: 'Sign Out',
@@ -30,9 +33,8 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }) {
 
    return (
       <header
-         className={`bg-gray-300 fixed w-full h-16 z-50 flex justify-between items-center transition-all duration-[500ms] ${
-            sidebarOpen ? 'pl-56' : ''
-         }`}
+         className={`bg-gray-300 fixed w-full h-16 z-50 flex justify-between items-center transition-all duration-[500ms] ${sidebarOpen ? 'pl-56' : ''
+            }`}
       >
          <div className='navbar bg-sky-900 px-4'>
             <div className='flex-1'>
@@ -63,9 +65,8 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }) {
                         />
                      </div>
                      <FiChevronDown
-                        className={`w-4 h-4 text-white transition-transform ${
-                           menuIconRotate ? 'rotate-180' : ''
-                        }`}
+                        className={`w-4 h-4 text-white transition-transform ${menuIconRotate ? 'rotate-180' : ''
+                           }`}
                      />
                   </div>
                   <ul
@@ -80,7 +81,6 @@ export default function TopBar({ sidebarOpen, setSidebarOpen }) {
                  hover:bg-gray-300 cursor-pointer px-2 py-2`}
                            >
                               <Icon className={`h-4 w-4 text-gray-900`} />
-
                               <div className='text-gray-900'>{label}</div>
                            </div>
                         );

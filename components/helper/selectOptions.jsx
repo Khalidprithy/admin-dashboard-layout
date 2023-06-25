@@ -84,3 +84,22 @@ export const StreamTypeOptions = [
       name: 'Web'
    }
 ];
+
+export const selectPageOptions = [
+   {
+      id: 0,
+      name: '5'
+   },
+   {
+      id: 1,
+      name: '10'
+   },
+   {
+      id: 2,
+      name: '25'
+   },
+   {
+      id: 3,
+      name: '50'
+   }
+];

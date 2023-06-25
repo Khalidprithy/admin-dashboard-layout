@@ -75,9 +75,9 @@ const DatePicker = () => {
             className='custom-date-input'
          /> */}
          <div className='w-full'>
-            <div className='relative h-11 w-full min-w-[200px]'>
+            <div className='relative h-11 max-w-[400px] min-w-[200px]'>
                <input
-                  className='peer h-full w-full rounded-md border-0 shadow-sm border-blue-gray-200  bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-cyan-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50'
+                  className='peer h-full w-full rounded-md border border-gray-200 shadow border-blue-gray-200  bg-transparent px-3 py-3 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-cyan-500 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50'
                   placeholder=''
                   type='date'
                   value={format(selectedDate, 'yyyy-MM-dd')}
@@ -95,19 +95,25 @@ const DatePicker = () => {
             onChange={handleDateChange}
          /> */}
 
-         <ul className='flex items-center gap-6 py-8'>
+         <ul className='flex flex-wrap items-center justify-center gap-6 py-8'>
             {datesArray.map((date, index) => (
                <li
                   key={date}
-                  className='flex flex-col ga-1 bg-gray-600 text-white px-3 py-2'
+                  className='flex flex-col ga-1 bg-gray-300 text-gray-800 px-2 py-1 rounded-sm shadow hover:shadow-lg scale-105 transition-all ease-out duration-150'
                   onClick={() => handleDateChange(new Date(date))}
                >
-                  {format(date, 'yyyy-MM-dd')}
+                  <span className='font-medium'>{format(date, 'MMMM')}</span>
                   <div onClick={handleClick}>
                      {currentDate.toDateString() === date.toDateString() ? (
-                        <div>{`Today ${format(date, ', dd MMMM')}`}</div>
+                        <div className='text-sm'>{`Today ${format(
+                           date,
+                           ', dd MMMM'
+                        )}`}</div>
                      ) : (
-                        <div>{`${format(date, 'EEE, dd MMMM')}`}</div>
+                        <div className='text-sm'>{`${format(
+                           date,
+                           'EEEE, dd'
+                        )}`}</div>
                      )}
                   </div>
                </li>

@@ -5,6 +5,7 @@ import { Fragment, useEffect, useState } from 'react';
 import Footer from '../global/Footer';
 import SideBar from '../global/Sidebar';
 import TopBar from '../global/Topbar';
+
 export default function Layout({ children }) {
    const [sidebarOpen, setSidebarOpen] = useState(true);
    const [isMobile, setIsMobile] = useState(false);
@@ -43,9 +44,8 @@ export default function Layout({ children }) {
             <SideBar sidebarOpen={sidebarOpen} />
          </Transition>
          <div
-            className={`pt-16 transition-all duration-[500ms] ease-in-out ${
-               sidebarOpen && !isMobile ? 'pl-56' : ''
-            } flex-grow`}
+            className={`pt-16 transition-all duration-[500ms] ease-in-out ${sidebarOpen && !isMobile ? 'pl-56' : ''
+               } flex-grow`}
          >
             <main className='p-2 bg-gray-100 h-full'>{children}</main>
             <Footer />

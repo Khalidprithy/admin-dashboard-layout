@@ -34,9 +34,9 @@ const SideBar = forwardRef(({ sidebarOpen }, ref) => {
          },
          {
             icon: LuFileVideo,
-            label: 'Fixures',
-            active: pathname === '/fixures',
-            href: '/fixures'
+            label: 'Fixtures',
+            active: pathname === '/fixtures',
+            href: '/fixtures'
          },
          {
             icon: ImFileVideo,
@@ -64,7 +64,7 @@ const SideBar = forwardRef(({ sidebarOpen }, ref) => {
          },
          {
             icon: FaIoxhost,
-            label: 'Subsscriptions',
+            label: 'Subscriptions',
             active: pathname === '/subscription',
             href: '/subscription'
          },
@@ -118,14 +118,14 @@ const SideBar = forwardRef(({ sidebarOpen }, ref) => {
          ref={ref}
          className='fixed z-50 w-56 h-full bg-sky-900 shadow-sm transition-all ease-in-out duration-500 '
       >
-         <div className='bg-sky-900 border-r-8 boder-white text-white text-lg font-bold sticky top-0 left-0 right-0 flex justify-center items-center h-16'>
+         <div className='bg-sky-900 border-r-8 border-sky-700 text-white shadow text-lg font-bold sticky top-0 left-0 right-0 flex justify-center items-center h-16'>
             Turbo Sports
          </div>
          <div className='bg-sky-900 flex flex-col px-4 overflow-auto h-full'>
             {routes.map((route, index) => {
                const { label, icon: Icon, active, href } = route;
                return (
-                  <Link href={href}>
+                  <Link key={route.icon} href={href}>
                      <div
                         className={`flex flex-row items-center 
                                 gap-3 px-4 py-3 text-white hover:bg-gray-500 hover:rounded
