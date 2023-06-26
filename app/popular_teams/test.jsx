@@ -6,34 +6,45 @@ import Layout from '@/components/layout/DashboardLayout';
 import axios from 'axios';
 import { useState } from 'react';
 import { AiOutlineHome } from 'react-icons/ai';
-import { FaTrashAlt } from 'react-icons/fa';
 
 export default function PopularTeams() {
    const [inputText, setInputText] = useState();
+   const [searchResults, setSearchResults] = useState([]);
 
    const [countries, setCountries] = useState([]);
 
    const fetchedCountries = async () => {
-      const api_key = process.env.NEXT_PUBLIC_SPORTMONKS_API_TOKEN;
-      const formData = new FormData();
-      formData.append('api_key', api_key);
+      try {
+         const api_key = process.env.NEXT_PUBLIC_SPORTMONKS_API_TOKEN;
+         const formData = new FormData();
+         formData.append('api_key', api_key);
 
-      const response = await axios
-         .post(`http://localhost:5000/teams/search/${inputText}`, formData, {
-            headers: {
-               'Content-Type': 'multipart/form-data'
+         const response = await axios.post(
+            `http://localhost:5000/teams/search/${inputText}`,
+            formData,
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data'
+               }
             }
-         })
-         .catch(err => console.log(err));
+         );
 
-      const data = response.data;
-      console.log(data);
+         const data = response.data;
+         setSearchResults(data);
+      } catch (error) {
+         console.log(error);
+      }
    };
 
-   const handleChange = async e => {
-      e.preventDefault();
-      setInputText(e.target.value);
-      await fetchedCountries();
+   const handleChange = e => {
+      const input = e.target.value;
+      setInputText(input);
+
+      if (input.length >= 3) {
+         fetchedCountries();
+      } else {
+         setSearchResults([]);
+      }
    };
 
    const entities = [
@@ -59,7 +70,7 @@ export default function PopularTeams() {
                <h4 className='text-sm font-semibold text-gray-500 pb-2'>
                   Search Popular Teams
                </h4>
-               <SearchInput label={'Search'} />
+               <SearchInput label={'Search'} onChange={handleChange} />
                <h6 className='text-sm text-gray-500 pt-2'>
                   Enter at least 3 letter
                </h6>
@@ -69,22 +80,20 @@ export default function PopularTeams() {
                <h4 className='text-lg font-semibold text-gray-600 p-2'>
                   Popular Team List
                </h4>
-               <div className='flex flex-col gap-2 divide-y px-5'>
-                  {entities.map(team => (
-                     <div
-                        key={team.id}
-                        className='flex items-center justify-between py-2'
-                     >
-                        <div>
-                           <h4>{team.name}</h4>
-                        </div>
-                        <button className='btn btn-circle btn-sm bg-red-500 hover:bg-red-600'>
-                           <FaTrashAlt className='text-white' />
-                        </button>
-                     </div>
-                  ))}
-               </div>
             </div>
+
+            {searchResults.length > 0 && (
+               <div className='bg-white rounded shadow p-4 mt-5'>
+                  <h4 className='text-lg font-semibold text-gray-600 p-2'>
+                     Search Results
+                  </h4>
+                  <ul>
+                     {searchResults.map(result => (
+                        <li key={result.id}>{result.name}</li>
+                     ))}
+                  </ul>
+               </div>
+            )}
          </div>
       </Layout>
    );
