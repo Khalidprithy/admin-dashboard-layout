@@ -1,23 +1,28 @@
 'use client';
 
 import Breadcumbs from '@/components/Breadcumbs/Breadcumbs';
+import ConfirmDeleteModal from '@/components/Modal/confirmDeleteModal';
 import Layout from '@/components/layout/DashboardLayout';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiFillTrophy, AiOutlineHome } from 'react-icons/ai';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';
 
 export default function PopularCompetitions() {
+   const [league, setLeague] = useState({});
    const [inputText, setInputText] = useState();
    const [searchResults, setSearchResults] = useState([]);
    const [isLoading, setIsLoading] = useState(false);
    const [showResults, setShowResults] = useState(false);
+   const [popularLeagues, setPopularLeagues] = useState([]);
+
+   // console.log('Popular Leagues', popularLeagues);
 
    const searchedCompetitions = searchResults?.result?.data;
 
-   console.log('Searched player', searchedCompetitions);
-   const fetchedCountries = async () => {
+   // console.log('Searched leagues', searchedCompetitions);
+   const searchLeagues = async () => {
       try {
          setIsLoading(true);
          const api_token = process.env.NEXT_PUBLIC_SPORTMONKS_API_TOKEN;
@@ -41,29 +46,54 @@ export default function PopularCompetitions() {
    };
 
    const handleChange = e => {
-      console.log('here');
+      // console.log('Search input');
       const input = e.target.value;
       setInputText(input);
       if (input.length >= 3) {
          setShowResults(true);
-         fetchedCountries();
+         searchLeagues();
       } else {
          setSearchResults([]);
          setShowResults(false);
       }
    };
 
-   const entities = [
-      { id: 1, name: 'Neynei Keo Nei' },
-      { id: 2, name: 'Leo mejut' },
-      { id: 3, name: 'CR 67' },
-      { id: 4, name: 'R 900' }
-   ];
+   // Fetch popular leagues
+   useEffect(() => {
+      const fetchPopularLeagues = async () => {
+         try {
+            const response = await axios.post(
+               'http://localhost:5000/popular_leagues'
+            );
+            const data = response.data.data;
+            console.log(data);
+            setPopularLeagues(data);
+         } catch (error) {
+            console.error('Error fetching popular leagues:', error);
+         }
+      };
+
+      fetchPopularLeagues();
+   }, []);
 
    const handleClick = league => {
       console.log(league);
-      const leagueData = { league_id: league.id, ...league };
-      console.log('New League', leagueData);
+      const leagueData = { ...league, league_id: league.id };
+      delete leagueData.id;
+
+      // console.log('New League', leagueData);
+
+      // Make the Axios POST request to create a new league
+      axios
+         .post('http://localhost:5000/popular_league', leagueData)
+         .then(response => {
+            console.log('League created successfully:', response.data);
+            // Perform any additional actions after successful creation
+         })
+         .catch(error => {
+            console.error('Error creating league:', error);
+            // Handle any error that occurred during the request
+         });
    };
 
    return (
@@ -102,12 +132,26 @@ export default function PopularCompetitions() {
                         </div>
                      ) : (
                         <ul className='divide-y'>
+                           {!searchedCompetitions && (
+                              <div className='text-center py-5 font-medium text-gray-700'>
+                                 No league found 😭
+                              </div>
+                           )}
                            {searchedCompetitions?.map(league => (
                               <div
                                  className='flex items-center justify-between'
                                  key={league.id}
                               >
-                                 <li className='py-3 text-sm'>{league.name}</li>
+                                 <div className='flex items-center gap-2'>
+                                    <img
+                                       className='w-8'
+                                       src={league.image_path}
+                                       alt='league Image'
+                                    />
+                                    <li className='py-3 text-sm'>
+                                       {league.name}
+                                    </li>
+                                 </div>
                                  <button className='btn btn-circle btn-sm bg-green-500 hover:bg-green-600'>
                                     <BsPlusCircleFill
                                        onClick={() => handleClick(league)}
@@ -127,19 +171,34 @@ export default function PopularCompetitions() {
                   Popular Leagues List
                </h4>
                <div className='flex flex-col gap-2 divide-y px-5'>
-                  {entities.map(league => (
+                  {popularLeagues?.map(league => (
                      <div
                         key={league.id}
                         className='flex items-center justify-between py-2'
                      >
-                        <div>
+                        <div className='flex items-center gap-2'>
+                           <img
+                              className='w-8'
+                              src={league.image_path}
+                              alt='league Image'
+                           />
                            <h4>{league.name}</h4>
                         </div>
-                        <button className='btn btn-circle btn-sm bg-red-500 hover:bg-red-600'>
+                        <button
+                           className='btn btn-circle btn-sm bg-red-500 hover:bg-red-600'
+                           onClick={() => {
+                              setLeague(league);
+                              window.confirm_delete_modal.showModal();
+                           }}
+                        >
                            <FaTrashAlt className='text-white text-base hover:animate-pulse transition-all ease-linear duration-150' />
                         </button>
                      </div>
                   ))}
+                  <ConfirmDeleteModal
+                     league={league}
+                     uniqueId={'confirm_delete_modal'}
+                  />
                </div>
             </div>
          </div>

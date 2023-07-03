@@ -1,23 +1,27 @@
 'use client';
 
 import Breadcumbs from '@/components/Breadcumbs/Breadcumbs';
+import ConfirmDeleteModalTeam from '@/components/Modal/confirmDeleteModalTeam';
 import Layout from '@/components/layout/DashboardLayout';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineHome } from 'react-icons/ai';
 import { BiFootball } from 'react-icons/bi';
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { FaTrashAlt } from 'react-icons/fa';
 
 export default function PopularTeams() {
+   const [team, setTeam] = useState({});
    const [inputText, setInputText] = useState();
    const [searchResults, setSearchResults] = useState([]);
    const [isLoading, setIsLoading] = useState(false);
    const [showResults, setShowResults] = useState(false);
+   const [popularTeams, setPopularTeams] = useState([]);
 
    const searchedTeams = searchResults?.result?.data;
 
-   console.log('Searched Team', searchedTeams);
+   console.log('Added Popular Teams', popularTeams);
+
    const fetchedCountries = async () => {
       try {
          setIsLoading(true);
@@ -54,12 +58,43 @@ export default function PopularTeams() {
       }
    };
 
-   const entities = [
-      { id: 1, name: 'Man city' },
-      { id: 2, name: 'Arsenal' },
-      { id: 3, name: 'Man city' },
-      { id: 4, name: 'Juv' }
-   ];
+   // Fetch popular teams
+   useEffect(() => {
+      const fetchPopularTeams = async () => {
+         try {
+            const response = await axios.post(
+               'http://localhost:5000/popular_teams'
+            );
+            const data = response.data.data;
+            console.log(data);
+            setPopularTeams(data);
+         } catch (error) {
+            console.error('Error fetching popular teams:', error);
+         }
+      };
+
+      fetchPopularTeams();
+   }, []);
+
+   const handleClick = team => {
+      console.log(team);
+      const teamData = { ...team, team_id: team.id };
+      delete teamData.id;
+
+      // console.log('New team', teamData);
+
+      // Make the Axios POST request to create a new team
+      axios
+         .post('http://localhost:5000/popular_team', teamData)
+         .then(response => {
+            console.log('team created successfully:', response.data);
+            // Perform any additional actions after successful creation
+         })
+         .catch(error => {
+            console.error('Error creating team:', error);
+            // Handle any error that occurred during the request
+         });
+   };
 
    return (
       <Layout>
@@ -97,14 +132,26 @@ export default function PopularTeams() {
                         </div>
                      ) : (
                         <ul className='divide-y'>
-                           {searchedTeams?.map(result => (
+                           {searchedTeams?.map(team => (
                               <div
                                  className='flex items-center justify-between'
-                                 key={result.id}
+                                 key={team.id}
                               >
-                                 <li className='py-3 text-sm'>{result.name}</li>
+                                 <div className='flex items-center gap-2'>
+                                    <img
+                                       className='w-8'
+                                       src={team.image_path}
+                                       alt='team Image'
+                                    />
+                                    <li className='py-3 text-sm'>
+                                       {team.name}
+                                    </li>
+                                 </div>
                                  <button className='btn btn-circle btn-sm bg-green-500 hover:bg-green-600'>
-                                    <BsPlusCircleFill className='text-white text-lg hover:text-xl transition-all ease-linear duration-150' />
+                                    <BsPlusCircleFill
+                                       onClick={() => handleClick(team)}
+                                       className='text-white text-lg hover:text-xl transition-all ease-linear duration-150'
+                                    />
                                  </button>
                               </div>
                            ))}
@@ -119,19 +166,34 @@ export default function PopularTeams() {
                   Popular Team List
                </h4>
                <div className='flex flex-col gap-2 divide-y px-5'>
-                  {entities.map(team => (
+                  {popularTeams?.map(team => (
                      <div
                         key={team.id}
                         className='flex items-center justify-between py-2'
                      >
-                        <div>
+                        <div className='flex items-center gap-2'>
+                           <img
+                              className='w-8'
+                              src={team.image_path}
+                              alt='team Image'
+                           />
                            <h4>{team.name}</h4>
                         </div>
-                        <button className='btn btn-circle btn-sm bg-red-500 hover:bg-red-600'>
+                        <button
+                           className='btn btn-circle btn-sm bg-red-500 hover:bg-red-600'
+                           onClick={() => {
+                              setTeam(team);
+                              window.confirm_delete_modal.showModal();
+                           }}
+                        >
                            <FaTrashAlt className='text-white text-base hover:animate-pulse transition-all ease-linear duration-150' />
                         </button>
                      </div>
                   ))}
+                  <ConfirmDeleteModalTeam
+                     team={team}
+                     uniqueId={'confirm_delete_modal'}
+                  />
                </div>
             </div>
          </div>
